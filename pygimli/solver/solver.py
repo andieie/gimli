@@ -405,6 +405,8 @@ def generateBoundaryValue(boundary, arg, time=0.0, userData={},
     if nCoeff == 1 and expectList is False:
         if isinstance(val, float):
             val = np.ones(boundary.nodeCount(), dtype=float) * val
+        elif isinstance(val, complex):
+            val = np.ones(boundary.nodeCount(), dtype=complex) * val
         if len(val) != boundary.nodeCount():
             print(val)
             pg.critical("Boundary value cannot be generated for nCoeff=1 val:",
@@ -2029,6 +2031,7 @@ def createMassMatrix(mesh, b=None):
         b = pg.CVector(mesh.cellCount(), b)
         B = pg.matrix.CSparseMatrix()
         B.fillMassMatrix(mesh, b)
+        return B
 
     B = pg.matrix.SparseMatrix()
     B.fillMassMatrix(mesh, b)
