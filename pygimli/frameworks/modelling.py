@@ -94,8 +94,7 @@ class Modelling(pg.core.ModellingBase):
 
 
     def __hash__(self):
-        """ Create a hash for Method Manager.
-        """
+        """Create a hash for Method Manager."""
         # ^ pg.utils.dirHash(self._regionProperties)
         if self._data is not None:
             return pg.utils.strHash(str(type(self))) ^ hash(self._data)
@@ -104,7 +103,7 @@ class Modelling(pg.core.ModellingBase):
 
 
     def Sx(self, x):
-        """ Right-hand side multiplication of Jacobian J*x.
+        """Right-hand side multiplication of Jacobian J*x.
 
         By default, uses self.jacobian().mult(x)
         Overwrite for efficient use with gradient-type inversion.
@@ -113,7 +112,7 @@ class Modelling(pg.core.ModellingBase):
 
 
     def STy(self, y):
-        """ Right-hand side multiplication of Jacobian J.T*y.
+        """Right-hand side multiplication of Jacobian J.T*y.
 
         By default, uses self.jacobian().transMult(x)
         Overwrite for efficient use with gradient-type inversion.
@@ -129,15 +128,13 @@ class Modelling(pg.core.ModellingBase):
 
     @property
     def fop(self):
-        """ Forward operator.
-        """
+        """Forward operator."""
         return self._fop
 
 
     @fop.setter
     def fop(self, fop):
-        """ Set forward operator.
-        """
+        """Set forward operator."""
         if fop is not None:
             if not isinstance(fop, pg.frameworks.Modelling):
                 pg.critical('Forward operator needs to be an instance of '
@@ -148,21 +145,18 @@ class Modelling(pg.core.ModellingBase):
 
     @property
     def data(self):
-        """ Return data.
-        """
+        """Return data."""
         return self._data
 
 
     @data.setter
     def data(self, d):
-        """ Set data (short property setter).
-        """
+        """Set data (short property setter)."""
         self.setData(d)
 
 
     def setData(self, data):
-        """ Set data (actual version).
-        """
+        """Set data (actual version)."""
         if isinstance(data, pg.DataContainer):
             self.setDataContainer(data)
         else:
@@ -170,14 +164,12 @@ class Modelling(pg.core.ModellingBase):
 
 
     def setDataPost(self, data):
-        """ Called when the dataContainer has been set successfully.
-        """
+        """Called when the dataContainer has been set successfully."""
         pass
 
 
     def setDataContainer(self, data):
-        """ Set Data container.
-        """
+        """Set Data container."""
         if self.fop is not None:
             pg.critical('in use?')
             self.fop.setData(data)
@@ -200,8 +192,7 @@ class Modelling(pg.core.ModellingBase):
 
     @modelTrans.setter
     def modelTrans(self, tm):
-        """ Set model transformation.
-        """
+        """Set model transformation."""
         if isinstance(tm, str):
             if tm.lower() == "log":
                 tm = pg.trans.TransLog()
@@ -214,8 +205,7 @@ class Modelling(pg.core.ModellingBase):
 
 
     def regionManager(self):
-        """ Region manager.
-        """
+        """Region manager."""
         self._regionManagerInUse = True
         # initialize RM if necessary
         super().regionManager()
@@ -226,8 +216,7 @@ class Modelling(pg.core.ModellingBase):
 
     @property
     def parameterCount(self):
-        """ Return parameter count.
-        """
+        """Return parameter count."""
         pC = self.regionManager().parameterCount()
         if pC == 0:
             pg.warn("Parameter count is 0")
@@ -236,8 +225,7 @@ class Modelling(pg.core.ModellingBase):
 
 
     def ensureContent(self):
-        """ Whatever this is.
-        """
+        """Whatever this is."""
         pass
 
 
@@ -247,13 +235,12 @@ class Modelling(pg.core.ModellingBase):
 
 
     def createDefaultStartModel(self, dataVals):
-        """ Create the default startmodel as the median of the data values.
-        """
+        """Create the default startmodel as the median of the data values."""
         pg.critical("'don't use me")
 
 
     def createStartModel(self, dataVals=None):
-        """ Create the default startmodel as the median of the data values.
+        """Create the default startmodel as the median of the data values.
 
         Overwriting might be a good idea.
         Its used by inversion to create a valid startmodel if there are
@@ -269,15 +256,13 @@ class Modelling(pg.core.ModellingBase):
 
 
     def clearRegionProperties(self):
-        """ Clear all region parameter.
-        """
+        """Clear all region parameter."""
         self._regionChanged = True
         self._regionProperties = {}
 
 
     def regionProperties(self, regionNr=None):
-        """ Return dictionary of all properties for region number regionNr.
-        """
+        """Return dictionary of all properties for region number regionNr."""
         if regionNr is None:
             return self._regionProperties
 
@@ -618,8 +603,7 @@ class MeshModelling(Modelling):
 
 
     def __hash__(self):
-        """ Unique hash for caching.
-        """
+        """Unique hash for caching."""
         return super().__hash__() ^ hash(self.mesh())
 
 
@@ -637,7 +621,7 @@ class MeshModelling(Modelling):
 
 
     def setCustomConstraints(self, C):
-        """ Set custom constraints matrix for lazy evaluation.
+        """Set custom constraints matrix for lazy evaluation.
 
         To remove them set it to 'None' again.
         """
@@ -645,8 +629,7 @@ class MeshModelling(Modelling):
 
 
     def createConstraints(self):
-        """ Create constraint matrix.
-        """
+        """Create constraint matrix."""
         # just ensure there is valid mesh
         # self.mesh()
 
@@ -682,8 +665,7 @@ class MeshModelling(Modelling):
 
 
     def paraModel(self, model):
-        """ Return parameter model, i.e. model mapped back with cell markers.
-        """
+        """Return parameter model, i.e. model mapped back with cell markers."""
         mod = model[self.paraDomain.cellMarkers()]
         if isinstance(mod, np.ndarray):
             mod = pg.Vector(mod)
@@ -694,7 +676,7 @@ class MeshModelling(Modelling):
 
 
     def ensureContent(self):
-        """ Internal function to ensure there is a valid initialized mesh.
+        """Internal function to ensure there is a valid initialized mesh.
 
         Initialization means the cell marker are recounted and/or there was a
         mesh refinement or boundary enlargement, all to fit the needs for the
@@ -713,7 +695,7 @@ class MeshModelling(Modelling):
 
 
     def createRefinedFwdMesh(self, mesh):
-        """ Refine the current mesh for higher accuracy.
+        """Refine the current mesh for higher accuracy.
 
         This is called automatic when accessing self.mesh() so it ensures any
         effect of changing region properties (background, single).
@@ -732,8 +714,7 @@ class MeshModelling(Modelling):
 
 
     def createFwdMesh_(self):
-        """ Create forward mesh.
-        """
+        """Create forward mesh."""
         pg.info("Creating forward mesh from region infos.")
         m = pg.Mesh(self.regionManager().mesh())
 
@@ -760,8 +741,7 @@ class MeshModelling(Modelling):
 
 
     def mesh(self):
-        """ Returns the currently used mesh.
-        """
+        """Return currently used mesh."""
         self._applyRegionProperties()
 
         if self._regionManagerInUse and self._regionChanged is True:
@@ -771,8 +751,7 @@ class MeshModelling(Modelling):
 
 
     def setMesh(self, mesh, ignoreRegionManager=False):
-        """ Set mesh and specify whether region manager can be ignored.
-        """
+        """Set mesh and specify whether region manager can be ignored."""
         # pg._b('setMesh', id(mesh), mesh, ignoreRegionManager)
         # keep a copy, just in case
         self._baseMesh = mesh
@@ -795,8 +774,7 @@ class MeshModelling(Modelling):
 
 
     def setDefaultBackground(self):
-        """ Set the lowest region to background if several exist.
-        """
+        """Set the lowest region to background if several exist."""
         regionIds = self.regionManager().regionIdxs()
         pg.info("Found {} regions.".format(len(regionIds)))
         if len(regionIds) > 1:
