@@ -953,6 +953,7 @@ def matrixRow(A, n):
     one[n] = 1.0
     return A.transMult(one)
 
+
 def matrixColumn(A, n):
     """Return matrix column of arbitrary matrix."""
     assert n < A.cols(), "number exceeds number of columns in matrix"
@@ -960,17 +961,65 @@ def matrixColumn(A, n):
     one[n] = 1.0
     return A.mult(one)
 
-def complexMatrix(R, I, scaleR=1.0, scaleI=1.0):
-    """Create a complex-valued matrix from two real-valued ones."""
-    assert R.cols() == I.cols(), "Number of columns need to match"
-    assert R.rows() == I.rows(), "Number of columns need to match"
-    if isinstance(R, SparseMapMatrix) and isinstance(I, SparseMapMatrix):
-        assert R.vecColPtr() == I.vecColPtr(), "sparsity structure differs"
-        assert R.vecRowIdx() == I.vecRowIdx(), "sparsity structure differs"
-        return pg.core.CSparseMatrix(R.vecColPtr(), R.vecRowIdx(),
-                                     pg.core.toComplex(R.vecVals()*scaleR,
-                                     I.vecVals()*scaleI))
 
+def complexMatrix(Re, Im, scaleR=1.0, scaleI=1.0):
+    """Create a complex-valued matrix from two real-valued ones."""
+    assert Re.cols() == Im.cols(), "Number of columns need to match"
+    assert Re.rows() == Im.rows(), "Number of columns need to match"
+    if isinstance(Re, SparseMapMatrix) and isinstance(Im, SparseMapMatrix):
+        assert Re.vecColPtr() == Im.vecColPtr(), "sparsity structure differs"
+        assert Re.vecRowIdx() == Im.vecRowIdx(), "sparsity structure differs"
+        return pg.core.CSparseMatrix(Re.vecColPtr(), Re.vecRowIdx(),
+                                     pg.core.toComplex(Re.vecVals()*scaleR,
+                                     Im.vecVals()*scaleI))
+    else:
+        raise NotImplementedError("Only SparseMapMatrix supported so far.")
+
+
+def complex2RealMatrix(Re, Im, scale=1, symm=False):
+    """Return real-valued matrix representing complex matrix.
+
+    C = |   R -sI |
+        | +sI   R |
+
+    with s being a scaling factor (e.g. frequency)
+
+    so that C * [xR; xI] = [R*xR - I*xI; I*xR + R*xI] represents
+    multiplication with complex matrix (R + iI) * (xR + i xI).
+
+    Parameters
+    ----------
+    Re : pg.MatrixBase
+        real part of complex matrix
+    Im : pg.MatrixBase
+        imaginary part of complex matrix
+    scale : float
+        scaling factor for imaginary part
+    symm : bool [False]
+        whether to force a symmetric matrix
+
+    C = |   R -sI |
+        | -sI  -R |
+
+    Returns
+    -------
+    B : pg.BlockMatrix
+        real-valued block matrix representing complex matrix
+    """
+    B = pg.BlockMatrix()
+    B.ReID = B.addMatrix(Re)
+    B.ImID = B.addMatrix(Im)
+    B.addMatrixEntry(B.ReID, 0, 0)
+    B.addMatrixEntry(B.ImID, 0, Re.rows(), scale=-scale)
+    if symm:
+        B.addMatrixEntry(B.ReID, Re.rows(), Re.rows(), scale=-1)
+        B.addMatrixEntry(B.ImID, Re.rows(), 0, scale=-scale)
+    else:
+        B.addMatrixEntry(B.ReID, Re.rows(), Re.rows())
+        B.addMatrixEntry(B.ImID, Re.rows(), 0, scale=scale)
+
+    B.recalcMatrixSize()
+    return B
 
 
 if __name__ == "__main__":
