@@ -841,6 +841,37 @@ class GeostatisticConstraintsMatrix(MatrixBase):
         self._spur = None
 
 
+class FOPJacobian(MatrixBase):
+    """Return Jacobian operator for pyGIMLi(emg3d)."""
+
+    def __init__(self, fop : pg.Modelling):
+        """Initiate a new Jacobian instance."""
+        super().__init__()
+        self.fop = fop
+
+    def cols(self):
+        """Return number of column, i.e., the model vector size."""
+        return self.parameterCount()
+
+    def rows(self):
+        """Return number of rows, i.e., the data vector size."""
+        return len(self.data)
+
+    def mult(self, x):
+        """Multiply the Jacobian with a vector, Jx."""
+        return self.Sx(x)
+
+    def transMult(self, y):
+        """Multiply  Jacobian transposed with a vector, Jᵀy."""
+        return self.STy(y)
+
+    def save(self, *args):
+        """There is no save for this pseudo-Jacobian."""
+        raise NotImplementedError("Cannot save FOPJacobian.")
+
+
+# Matrix generators
+
 def hstack(mats):
     """Syntactic sugar function to horizontally stacked matrix.
 
