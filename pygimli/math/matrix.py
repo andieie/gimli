@@ -844,7 +844,7 @@ class GeostatisticConstraintsMatrix(MatrixBase):
 class FOPJacobian(MatrixBase):
     """Return Jacobian operator for pyGIMLi(emg3d)."""
 
-    def __init__(self, fop : pg.Modelling):
+    def __init__(self, fop):
         """Initiate a new Jacobian instance."""
         super().__init__()
         self.fop = fop
