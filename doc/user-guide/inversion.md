@@ -36,7 +36,7 @@ To stabilize the inversion of ill-posed geophysical problems, additional constra
 A common approach is to add a regularization term $\Phi_\text{m}$ to the objective function that penalizes undesirable model features.
 A very common choice for 2D/3D problems is the roughness of the model distribution, but there is a wide range of different regularization methods (different kinds of smoothness and damping, mixed operators, anisotropic smoothing). We express this term by the matrix $\mathbf{W}_\text{m}$ acting on the model parameters $\mathbf{m}$ and possibly a reference model $\mathbf{m_0}$:
 
-$$ \Phi=\Phi_\text{d}+\lambda\Phi_\text{m} = \mathbf{W}_\text{d} (\mathbf{\mathcal{F}}(\mathbf{m})-\mathbf{d}) \|^2_2 + \lambda \| \mathbf{W}_\text{m} (\mathbf{m}-\mathbf{m_0}) \|^2_2 \rightarrow\min $$ (eq:min)
+$$ \Phi=\Phi_\text{d}+\lambda\Phi_\text{m} = \|\mathbf{W}_\text{d} (\mathbf{\mathcal{F}}(\mathbf{m})-\mathbf{d}) \|^2_2 + \lambda \| \mathbf{W}_\text{m} (\mathbf{m}-\mathbf{m_0}) \|^2_2 \rightarrow\min $$ (eq:min)
 
 The dimensionless factor $\lambda$ scales the influence of the regularization term $\Phi_\text{m}$ (model objective function).
 
@@ -57,7 +57,7 @@ Note that, assuming $\Phi_d$ (and by the choice of $\lambda$, $\Phi_m$ likewise)
 
 The gradient of the data objective function $\Phi_d$ can be computed by
 
-$$ g_d(\mathbf{m}^k) = \mathbf{J}\mathbf{W}_d^T \mathbf{W}_d (\mathbf{f}(\mathbf{m^k})-\mathbf{d}) $$
+$$ g_d(\mathbf{m}^k) = \mathbf{J}^T\mathbf{W}_d^T \mathbf{W}_d (\mathbf{f}(\mathbf{m^k})-\mathbf{d}) $$
 
 where the matrix $\mathbf{J}$ is the Jacobian (also named sensitivity, see transforms below) matrix holding the derivatives of the forward computation with respect to the model parameters
 
