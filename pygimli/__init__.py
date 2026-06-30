@@ -1,5 +1,7 @@
 #/usr/bin/env python3
 """pyGIMLi - An open-source library for modelling and inversion in geophysics."""
+print("[BINDER TEST] pygimli loaded from local repo source via `pip install -e .`")
+
 import sys
 import locale
 

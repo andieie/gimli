@@ -1,12 +1,18 @@
 #!/bin/bash
 set -e
 
+cd "${REPO_DIR:-/home/jovyan}"
+
+# Install pygimli from this repo's local source (editable), instead of the
+# latest PyPI release, so source changes on this branch take effect.
+# pgcore (the compiled C++ core) is pulled from PyPI as a regular dependency.
+pip install -e .
+
 # Configure PyVista for Jupyter with static backend (faster than trame for docs)
 python -c "import pyvista; pyvista.set_jupyter_backend('trame')"
 
 # Convert gallery .py scripts to notebooks using jupytext
 # Notebooks are placed in binder/notebooks/ (not committed to repo)
-cd "${REPO_DIR:-/home/jovyan}"
 NOTEBOOK_DIR="binder/notebooks"
 
 for pyfile in $(find doc/tutorials doc/examples -name "plot_*.py" 2>/dev/null); do
