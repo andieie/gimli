@@ -6,7 +6,7 @@ cd "${REPO_DIR:-/home/jovyan}"
 # Install pygimli from this repo's local source (editable), instead of the
 # latest PyPI release, so source changes on this branch take effect.
 # pgcore (the compiled C++ core) is pulled from PyPI as a regular dependency.
-pip install -e .
+pip install .
 
 # Configure PyVista for Jupyter with static backend (faster than trame for docs)
 python -c "import pyvista; pyvista.set_jupyter_backend('trame')"
